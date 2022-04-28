@@ -47,7 +47,7 @@ void main()
 
 	// Для тестов (если не нужно, закомментировать участок):
 	//---------------------От---------------------
-	char** forTests = new char* []
+	/*char** forTests = new char* []
 	{
 		new char[] { "Лобановский Валерий\0" },
 			new char[] { "Сковорода Григорий\0" },
@@ -62,17 +62,17 @@ void main()
 			new char[] { "Ступка Богдан\0" }
 	};
 	list = forTests;
-	number = 11;
+	number = 11;*/
 	//---------------------До---------------------
 
-	char menu[][30] = {
-		"1. Добавление студентов",
-		"2. Удаление студента",
-		"3. Модификация студента",
-		"4. Вывод на экран списка",
-		"5. Сортировка списка",
-		"6. Поиск студентов",
-		"7. Выход" };
+	char menu[7][30] = {
+	"1. Добавление студентов",
+	"2. Удаление студента",
+	"3. Модификация студента",
+	"4. Вывод на экран списка",
+	"5. Сортировка списка",
+	"6. Поиск студентов",
+	"7. Выход" };
 	while (true)
 	{
 		system("cls");
@@ -84,10 +84,10 @@ void main()
 			list = AddStudents(list, number);
 			break;
 		case '2':
-			list = RemoveStudent(list, number); // НЕ ГОТОВО
+			list = RemoveStudent(list, number);
 			break;
 		case '3':
-			list = EditStudent(list, number); // НЕ ГОТОВО
+			list = EditStudent(list, number);
 			break;
 		case '4':
 			Print(list, number);

@@ -3,6 +3,7 @@
 #include <iomanip>
 
 using namespace std;
+using std::system;
 
 // функция удаления динамического массива
 void Free(char* ptr)
@@ -10,21 +11,11 @@ void Free(char* ptr)
 	delete[] ptr;
 }
 
-// Функция выводит русский текст в окно консоли
-//void RussianMessage(const char* s)
-//{
-//	char* buf = new char[strlen(s) + 1];
-//	CharToOemA(s, buf);
-//	cout << buf;
-//	delete[] buf;
-//}
-
 // Функция меню выбора действия со списком студентов
-void Menu(char ptr[][30], int row)
+void Menu(char ptr[7][30], int row)
 {
 	for (int i = 0; i < row; i++)
 	{
-		//RussianMessage(ptr[i]);
 		cout << ptr[i];
 		cout << endl;
 	}
@@ -35,7 +26,6 @@ char** AddStudents(char** oldList, int& number)
 {
 	system("cls");
 	int n;
-	//RussianMessage("Введите количество студентов для добавления в список: ");
 	cout << "Введите количество студентов для добавления в список: ";
 	cin >> n;
 	cin.get();
@@ -45,12 +35,11 @@ char** AddStudents(char** oldList, int& number)
 	char str[100];
 	for (int i = number - n; i < number; i++)
 	{
-		//RussianMessage("Введите фамилию студента: ");
 		cout << "Введите фамилию студента: ";
 		cin.getline(str, 100);
-		int length = strlen(str);
-		newList[i] = new char[length + 1];
-		strcpy_s(newList[i], strlen(newList[i]), str);
+		int lengthStr = strlen(str) + 1; // Длина фамилии + нуль терм.
+		newList[i] = new char[lengthStr];
+		strcpy_s(newList[i], lengthStr, str);
 	}
 	delete[] oldList;
 	system("pause");
@@ -61,12 +50,10 @@ char** AddStudents(char** oldList, int& number)
 void Print(char** list, int number)
 {
 	system("cls");
-	//RussianMessage("Список студентов: ");
 	cout << "Список студентов: \n";
 	cout << endl;
 	for (int i = 0; i < number; i++)
 	{
-		//RussianMessage(list[i]);
 		cout << list[i];
 		cout << endl;
 	}
@@ -85,7 +72,7 @@ void Sort(char** list, int number)
 
 		for (int currentIndex = startIndex + 1; currentIndex < number; ++currentIndex)
 		{
-			if (strcmp(list[currentIndex], list[biggerIndex]) < 0)
+			if (strcmp(list[currentIndex], list[biggerIndex]) < 0) // Сортировка по убыванию
 				biggerIndex = currentIndex;
 		}
 
@@ -94,7 +81,6 @@ void Sort(char** list, int number)
 		list[biggerIndex] = temp;
 	}
 
-	//RussianMessage("Список отсортирован!\n ");
 	cout << "Список отсортирован!\n ";
 	system("pause");
 }
@@ -104,14 +90,52 @@ char** RemoveStudent(char** oldList, int& number)
 {
 	system("cls");
 	char str[100];
-	//RussianMessage("Введите фамилию студента для удаления: ");
 	cout << "Введите фамилию студента для удаления: ";
 	cin.getline(str, 100);
-	/*
-		Реализация алгоритма удаления студента из списка
-	*/
+
+	char** newList = new char* [--number];
+	int i{ 0 }, index{ 0 }, k{ 0 };
+	bool exit{ false };
+	for (i = 0; i < number + 1; i++)
+	{
+		if (strstr(oldList[i], str))
+		{
+			index = i;
+			exit = true;
+			for (int j = 0; j < number + 1; j++)
+			{
+				if (j == index)
+				{
+					j++;
+					newList[k] = oldList[j];
+					k++;
+					continue;
+				}
+				else if (j < index)
+				{
+					newList[k] = oldList[j];
+					k++;
+					continue;
+				}
+				else if (j > index)
+				{
+					newList[k] = oldList[j];
+					k++;
+				}
+			}
+		}
+		if (exit)
+			break;
+	}
+
+	Free(oldList[index]);
+	delete[] oldList;
+	oldList = nullptr;
+
+	cout << "\nСтудент отредактирован!\n";
+
 	system("pause");
-	return nullptr;
+	return newList;
 }
 
 // Функция модификации студента в списке
@@ -119,44 +143,29 @@ char** EditStudent(char** list, int number)
 {
 	system("cls");
 	char str[100];
-	//RussianMessage("Введите фамилию студента для модификации: ");
 	cout << "Введите фамилию студента для модификации: ";
 	cin.getline(str, 100);
-	/*
-		Реализация алгоритма модификации фамилии студента
-	*/
+
+	bool exit{ false };
 	for (int i = 0; i < number; i++)
 	{
-		//RussianMessage("Введите новые данные студента: ");
-		cout << "Введите новые данные студента: ";
-		char strNewData[100];
-		cin.getline(strNewData, 100);
-		//strcat_s(strNewData, strlen(strNewData), '\0');
-		char* buf = new char[strlen(strNewData) + 1];
-		CharToOemA(strNewData, buf);
-
-		delete[] buf;
-
-		char* copyOfListI = list[i];
-		char* copyOfStr = str;
-		_strlwr_s(copyOfListI, strlen(copyOfListI));
-		_strlwr_s(copyOfStr, strlen(copyOfStr));
-
-
-		if (strstr(list[i], str)) // ищем студента
+		if (strstr(list[i], str))
 		{
-			Free(list[i]); // удаляем старого студента
-
-
-
-			int length = strlen(strNewData);
-			list[i] = new char[length + 1];
-			strcpy_s(list[i], strlen(list[i]), strNewData);
+			exit = true;
+			Free(list[i]);
+			cout << "Введите новые данные студента: ";
+			char strNewData[100];
+			cin.getline(strNewData, 100);
+			char* buf = new char[strlen(strNewData) + 1];
+			strcpy_s(buf, strlen(buf) + 1, strNewData);
+			list[i] = buf;
+			buf = nullptr;
 		}
+		if (exit)
+			break;
 	}
 
-	//RussianMessage("\nСтудент отредактирован!");
-	cout << "\nСтудент отредактирован!";
+	cout << "\nСтудент отредактирован!\n";
 
 	system("pause");
 	return list;
@@ -167,10 +176,10 @@ void FindStudent(char** list, int number)
 {
 	system("cls");
 	char str[100];
-	//RussianMessage("Введите фамилию студента или несколько первых букв: ");
 	cout << "Введите фамилию студента или несколько первых букв: ";
 	cin.getline(str, 100);
 
+	int k{ 0 };
 	for (int i = 0; i < number; i++)
 	{
 		if (strstr(list[i], str))

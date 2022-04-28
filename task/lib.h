@@ -1,7 +1,4 @@
-﻿// Функция выводит русский текст в окно консоли
-//void RussianMessage(const char*);
-
-// Функция добавляет студентов в список
+﻿// Функция добавляет студентов в список
 char** AddStudents(char**, int&);
 
 // Функция печатает список студентов
@@ -20,7 +17,7 @@ char** EditStudent(char**, int);
 void FindStudent(char**, int);
 
 // Функция меню выбора действия со списком студентов
-void Menu(char ptr[][30], int row);
+void Menu(char ptr[7][30], int row);
 
 // функция удаления динамического массива
 void Free(char* ptr);
